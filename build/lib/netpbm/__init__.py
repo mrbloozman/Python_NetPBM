@@ -58,13 +58,12 @@ class NetPBM:
 
          if self.isBitMap():
             self.srcBitMap(f)
-            self.setGrayMap24bit()
          elif self.isGrayMap():
             self.srcGrayMap(f)
-            self.setGrayMap24bit()
+            self.setGrayMap565bit()
          elif self.isPixMap():
             self.srcPixMap(f)
-            self.setColorMap24bit()
+            self.setColorMap565bit()
 
 
          # print vars(self)
