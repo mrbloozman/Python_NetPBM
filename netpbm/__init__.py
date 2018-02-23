@@ -1,3 +1,9 @@
+import enum
+
+class ColorMap(enum.Enum):
+   b24 = 1
+   b16 = 2 # 565bits
+
 class NetPBM:
    def __init__(self):
       self._magicNumber = None
@@ -58,13 +64,13 @@ class NetPBM:
 
          if self.isBitMap():
             self.srcBitMap(f)
-            self.setGrayMap24bit()
+            # self.setGrayMap24bit()
          elif self.isGrayMap():
             self.srcGrayMap(f)
-            self.setGrayMap24bit()
+            # self.setGrayMap24bit()
          elif self.isPixMap():
             self.srcPixMap(f)
-            self.setColorMap24bit()
+            # self.setColorMap24bit()
 
 
          # print vars(self)
@@ -98,7 +104,7 @@ class NetPBM:
          while ln != '':
             for px in ln.strip().split():
                if px in ['0','1']:
-                  self._src.append(int(px))
+                  self._src.append((int(px)^1))
             ln = self.readLine(f)
       elif self.isBinary():
          bytewidth = (self._width+7)/8
@@ -108,7 +114,7 @@ class NetPBM:
             for b in row:
                for i in range(8):
                   if bits < self._width:
-                     self._src.append(b&(1<<i))
+                     self._src.append((b&(1<<i))^1)
                      bits = bits+1
             row = f.readLine(bytewidth)
 
@@ -200,7 +206,24 @@ class NetPBM:
       if (self._width * self._height) != len(self._src):
          raise IOError('NetPBM: Load is not valid')
 
-   def export(self):
+   def export(self,colorMap):
+      if self.isBitMap() or self.isGrayMap():
+         if colorMap==ColorMap.b24:
+            self.setGrayMap24bit()
+         elif colorMap==ColorMap.b16:
+            self.setGrayMap16bit()
+         else:
+            raise ValueError('NetPBM: ColorMap type is invalid')
+      elif self.isColorMap():
+         if colorMap==ColorMap.b24:
+            self.setColorMap24bit()
+         elif colorMap==ColorMap.b16:
+            self.setColorMap16bit()
+         else:
+            raise ValueError('NetPBM: ColorMap type is invalid')
+      else:
+         raise IOError('NetPBM: Magic number may not be defined - have you loaded a file?')
+
       data = []
       for px in self._src:
          data.append(self._colorMap[px])
