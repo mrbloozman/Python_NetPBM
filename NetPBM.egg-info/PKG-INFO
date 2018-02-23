@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: NetPBM
-Version: 0.1
+Version: 0.1.1
 Summary: Provides NetPBM class to load .pbm, .pgm, or .ppm files
 Home-page: UNKNOWN
 Author: Mark Schwartz
