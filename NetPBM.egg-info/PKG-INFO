@@ -1,4 +1,4 @@
-Metadata-Version: 1.0
+Metadata-Version: 1.2
 Name: NetPBM
 Version: 0.1.2
 Summary: Provides NetPBM class to load .pbm, .pgm, or .ppm files
@@ -6,5 +6,7 @@ Home-page: UNKNOWN
 Author: Mark Schwartz
 Author-email: mrbloozman@gmail.com
 License: MIT
+Project-URL: Source Code, https://www.github.com/mrbloozman/Python_NetPBM
+Description-Content-Type: UNKNOWN
 Description: UNKNOWN
 Platform: UNKNOWN
