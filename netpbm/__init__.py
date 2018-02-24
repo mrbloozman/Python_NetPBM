@@ -102,34 +102,43 @@ class NetPBM:
       if self.isAscii():
          ln = self.readLine(f)
          while ln != '':
-            for px in ln.strip().split():
-               if px in ['0','1']:
-                  self._src.append((int(px)^1))
+            if ln[0]=='#':
+               self._comment = self._comment + str(ln)
+            else:
+               for px in ln.strip().split():
+                  if px in ['0','1']:
+                     self._src.append((int(px)^1))
             ln = self.readLine(f)
       elif self.isBinary():
          bytewidth = (self._width+7)/8
          row = f.read(bytewidth)
          while len(row) > 0:
-            bits=0
             for b in row:
+               bits=0
                for i in range(8):
                   if bits < self._width:
-                     self._src.append((b&(1<<i))^1)
+                     if (ord(b)&(1<<i))>0:
+                        self._src.append(0)
+                     else:
+                        self._src.append(1)
                      bits = bits+1
-            row = f.readLine(bytewidth)
+            row = f.read(bytewidth)
 
    def srcGrayMap(self,f):
       if self.isAscii():
          ln = self.readLine(f)
          while ln != '':
-            for px in ln.strip().split():
-               try:
-                  ipx = int(px)
-                  if ipx not in self._colorMap:
-                     self._colorMap[ipx] = 0
-                  self._src.append(ipx)
-               except ValueError as e:
-                  pass
+            if ln[0]=='#':
+               self._comment = self._comment + str(ln)
+            else:
+               for px in ln.strip().split():
+                  try:
+                     ipx = int(px)
+                     if ipx not in self._colorMap:
+                        self._colorMap[ipx] = 0
+                     self._src.append(ipx)
+                  except ValueError as e:
+                     pass
             ln = self.readLine(f)
       elif self.isBinary():
          bytewidth = self._width
@@ -146,23 +155,24 @@ class NetPBM:
       if self.isAscii():
          ln = self.readLine(f)
          while ln != '':
-            pxs = ln.strip().split()
-            for i in range(0,len(pxs),3):
-               rpx = int(pxs[i])
-               gpx = int(pxs[i+1])
-               bpx = int(pxs[i+2])
-               rgb = (rpx<<16)+(gpx<<8)+bpx
-               if rgb not in self._colorMap:
-                  self._colorMap[rgb] = 0
-               self._src.append(rgb)
+            if ln[0]=='#':
+               self._comment = self._comment + str(ln)
+            else:
+               pxs = ln.strip().split()
+               for i in range(0,len(pxs),3):
+                  rpx = int(pxs[i])
+                  gpx = int(pxs[i+1])
+                  bpx = int(pxs[i+2])
+                  rgb = (rpx<<16)+(gpx<<8)+bpx
+                  if rgb not in self._colorMap:
+                     self._colorMap[rgb] = 0
+                  self._src.append(rgb)
+            ln = self.readLine(f)
       elif self.isBinary():
          bytewidth = self._width*3
          row = f.read(bytewidth)
          while len(row) > 0:
-            # pxs = bytes(ln)
-            # print len(pxs)
             for i in range(0,bytewidth,3):
-               # print pxs[i]
                rpx = ord(row[i])
                gpx = ord(row[i+1])
                bpx = ord(row[i+2])
@@ -214,7 +224,7 @@ class NetPBM:
             self.setGrayMap16bit()
          else:
             raise ValueError('NetPBM: ColorMap type is invalid')
-      elif self.isColorMap():
+      elif self.isPixMap():
          if colorMap==ColorMap.b24:
             self.setColorMap24bit()
          elif colorMap==ColorMap.b16:
