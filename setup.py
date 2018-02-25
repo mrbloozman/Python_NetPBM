@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name="NetPBM",
-    version="0.1.2",
+    version="0.1.3",
     packages=['netpbm'],
     # scripts=['say_hello.py'],
 
