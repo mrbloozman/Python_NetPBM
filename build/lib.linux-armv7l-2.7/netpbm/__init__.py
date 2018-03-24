@@ -118,8 +118,7 @@ class NetPBM:
             for b in row:
                for i in range(8):
                   if bits < self._width:
-                     # if (ord(b)&(1<<i))>0:
-                     if (ord(b)&(128>>i))>0:
+                     if (ord(b)&(1<<i))>0:
                         self._src.append(0)
                      else:
                         self._src.append(1)
@@ -155,23 +154,21 @@ class NetPBM:
 
    def srcPixMap(self,f):
       if self.isAscii():
-         pxdata = []
          ln = self.readLine(f)
          while ln != '':
             if ln[0]=='#':
                self._comment = self._comment + str(ln)
             else:
-               pxdata = pxdata + ln.strip().split()
+               pxs = ln.strip().split()
+               for i in range(0,len(pxs),3):
+                  rpx = int(pxs[i])
+                  gpx = int(pxs[i+1])
+                  bpx = int(pxs[i+2])
+                  rgb = (rpx<<16)+(gpx<<8)+bpx
+                  if rgb not in self._colorMap:
+                     self._colorMap[rgb] = 0
+                  self._src.append(rgb)
             ln = self.readLine(f)
-         for i in range(0,len(pxdata),3):
-            rpx = int(pxdata[i])
-            gpx = int(pxdata[i+1])
-            bpx = int(pxdata[i+2])
-            rgb = (rpx<<16)+(gpx<<8)+bpx
-            if rgb not in self._colorMap:
-               self._colorMap[rgb] = 0
-            self._src.append(rgb)
-            
       elif self.isBinary():
          bytewidth = self._width*3
          row = f.read(bytewidth)
