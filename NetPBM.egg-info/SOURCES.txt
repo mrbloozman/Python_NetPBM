@@ -1,7 +1,0 @@
-README.md
-setup.py
-NetPBM.egg-info/PKG-INFO
-NetPBM.egg-info/SOURCES.txt
-NetPBM.egg-info/dependency_links.txt
-NetPBM.egg-info/top_level.txt
-netpbm/__init__.py
